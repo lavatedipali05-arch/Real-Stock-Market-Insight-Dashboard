@@ -109,4 +109,4 @@ streamlit run app.py
 👨‍💻 Author
 
 - Your Name Dipali Lavate
-- GitHub: https://github.com/your-username
+- GitHub: https:https://github.com/lavatedipali05-arch/Real-Stock-Market-Insight-Dashboard/edit/main/README.md
