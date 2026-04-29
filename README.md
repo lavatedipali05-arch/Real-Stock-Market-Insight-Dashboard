@@ -48,8 +48,14 @@ This project is a Stock Market Analysis Dashboard built using Streamlit, featuri
 
 1. Clone the repository:
 
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/lavatedipali05-arch/Real-Stock-Market-Insight-Dashboard
+/
+.git clone 
+/
+
+cd your-repo-name=Real-Stock-Market-Insight-Dashboard
+/
+
 
 2. Install dependencies:
 
