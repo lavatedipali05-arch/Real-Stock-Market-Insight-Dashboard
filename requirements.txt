@@ -4,6 +4,6 @@ numpy
 matplotlib
 yfinance
 ta
-scikit-learn
-tensorflow-cpu==2.12.0
+scikit-learn==1.3.0
+tensorflow-cpu==2.15.0
 
