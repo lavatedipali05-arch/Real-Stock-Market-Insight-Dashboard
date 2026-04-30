@@ -76,7 +76,6 @@ ax.hist(df[col], bins=20)
 st.pyplot(fig)
 
 # ---------------------------
-# 🔥 Scatter Plot (2 columns)
 st.subheader("🔵 Scatter Plot")
 
 if len(numeric_cols) >= 2:
@@ -89,7 +88,9 @@ if len(numeric_cols) >= 2:
     ax2.set_ylabel(y_col)
 
     st.pyplot(fig2)
-else:
+
+elif len(numeric_cols) == 1:
     st.warning("Need at least 2 numeric columns")
+
 else:
     st.warning("No numeric columns found in dataset")
