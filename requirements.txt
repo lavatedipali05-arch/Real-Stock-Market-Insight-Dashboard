@@ -5,5 +5,5 @@ matplotlib
 yfinance
 ta
 scikit-learn
-tensorflow
+tensorflow-cpu==2.12.0
 
