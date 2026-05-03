@@ -8,9 +8,8 @@ import plotly.graph_objects as go
 
 st.title("📈 Stock Market Dashboard")
 
-ticker = st.text_input("Enter Stock Symbol", "TCS.NS")
+ticker = st.text_input("Enter Stock Symbol", "TCS")
 
-# ✅ AFTER import
 @st.cache_data
 def load_data(symbol):
     try:
@@ -25,7 +24,7 @@ df = load_data(ticker)
 
 if df.empty:
     st.error("❌ Data not loading")
-    st.info("Try: TCS.NS | RELIANCE.NS | INFY.NS")
+    st.info("Try: TCS| RELIANCE | INFY")
 else:
     st.success("✅ Data Loaded")
 
