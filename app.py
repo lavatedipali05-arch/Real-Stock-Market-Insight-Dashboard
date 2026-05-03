@@ -21,10 +21,8 @@ st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
 st.title("📈 Real-Time Stock Market Dashboard")
 
-# Sidebar
 ticker = st.sidebar.text_input("Enter Stock Symbol", "AAPL")
 
-# Load data
 @st.cache_data
 def load_data(ticker):
     df = yf.download(ticker, period="1y")
@@ -32,7 +30,7 @@ def load_data(ticker):
 
 df = load_data(ticker)
 
-# Indicators
+
 df['MA50'] = df['Close'].rolling(50).mean()
 df['MA200'] = df['Close'].rolling(200).mean()
 
@@ -49,7 +47,7 @@ ax.plot(df['MA50'], label='MA50')
 ax.plot(df['MA200'], label='MA200')
 ax.legend()
 
-st.pyplot(fi
+st.pyplot(fig)
 st.subheader("📊 Signal")
 
 if df['MA50'].iloc[-1] > df['MA200'].iloc[-1]:
