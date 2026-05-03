@@ -1,5 +1,4 @@
 import streamlit as st
-
 st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
 import yfinance as yf
@@ -8,33 +7,31 @@ import plotly.graph_objects as go
 
 st.title("📈 Stock Market Dashboard")
 
-# Input
-ticker = st.text_input("Enter Stock Symbol", "AAPL")
+ticker = st.text_input("Enter Stock Symbol", "TCS.NS")
 
-if ticker:
+def load_data(symbol):
     try:
-        df = yf.download(ticker, period="1y")
+        df = yf.download(symbol, period="1y", progress=False)
+        return df
+    except:
+        return pd.DataFrame()
 
-        # 👉 IMPORTANT FIX
-        if df.empty:
-            st.error("❌ No data found. Try different stock (e.g. TCS.NS, RELIANCE.NS)")
-        else:
-            st.success("✅ Data Loaded Successfully")
+df = load_data(ticker)
 
-            st.subheader("📊 Data Preview")
-            st.dataframe(df.tail())
+if df.empty:
+    st.warning("⚠️ AAPL not working sometimes on cloud. Try:")
+    st.code("TCS.NS | RELIANCE.NS | INFY.NS")
+else:
+    st.success("✅ Data Loaded")
 
-            # Candlestick
-            fig = go.Figure(data=[go.Candlestick(
-                x=df.index,
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close']
-            )])
+    st.dataframe(df.tail())
 
-            st.subheader("🕯️ Candlestick Chart")
-            st.plotly_chart(fig, use_container_width=True)
+    fig = go.Figure(data=[go.Candlestick(
+        x=df.index,
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close']
+    )])
 
-    except Exception as e:
-        st.error(f"❌ Error: {e}")
+    st.plotly_chart(fig, use_container_width=True)
