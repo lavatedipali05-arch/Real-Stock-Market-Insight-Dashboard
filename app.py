@@ -1,6 +1,5 @@
 import streamlit as st
 
-# MUST BE FIRST
 st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
 import yfinance as yf
