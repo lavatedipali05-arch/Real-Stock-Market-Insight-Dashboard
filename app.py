@@ -10,11 +10,6 @@ st.title("📈 Stock Market Dashboard")
 
 ticker = st.text_input("Enter Stock Symbol", "TCS.NS")
 
-@st.cache_data
-def load_data(symbol):
-    import streamlit as st
-import yfinance as yf
-import pandas as pd
 import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Stock Dashboard", layout="wide")
