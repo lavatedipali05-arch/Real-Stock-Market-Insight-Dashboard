@@ -1,17 +1,12 @@
-import streamlit as st
-st.set_page_config(page_title="Stock Dashboard", layout="wide")
-
-import yfinance as yf
-import pandas as pd
-import plotly.graph_objects as go
-
-st.title("📈 Stock Market Dashboard")
-
-ticker = st.text_input("Enter Stock Symbol", "TCS.NS")
-
+@st.cache_data
 def load_data(symbol):
     try:
         df = yf.download(symbol, period="1y", progress=False)
+
+        if df.empty:
+            # retry once
+            df = yf.download(symbol, period="6mo", progress=False)
+
         return df
     except:
         return pd.DataFrame()
@@ -19,12 +14,17 @@ def load_data(symbol):
 df = load_data(ticker)
 
 if df.empty:
-    st.warning("⚠️ AAPL not working sometimes on cloud. Try:")
-    st.code("TCS.NS | RELIANCE.NS | INFY.NS")
+    st.error("❌ Data not loading from Yahoo (Cloud issue)")
+
+    st.info("👉 Try these working symbols:")
+    st.code("RELIANCE.NS\nINFY.NS\nHDFCBANK.NS")
+
 else:
     st.success("✅ Data Loaded")
 
     st.dataframe(df.tail())
+
+    import plotly.graph_objects as go
 
     fig = go.Figure(data=[go.Candlestick(
         x=df.index,
