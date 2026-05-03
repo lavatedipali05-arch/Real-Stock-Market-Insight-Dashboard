@@ -36,3 +36,22 @@ if df is None:
 
 except Exception as e:
     st.error(f"Error: {e}")
+import requests
+
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0'
+})
+@st.cache_data
+def load_data(ticker):
+    import yfinance as yf
+    
+    try:
+        stock = yf.Ticker(ticker)
+        df = stock.history(period="1y")
+        
+        if df is None or df.empty:
+            return None
+        return df
+    except:
+        return None
