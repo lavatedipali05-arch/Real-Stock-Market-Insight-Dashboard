@@ -13,22 +13,24 @@ ticker = st.text_input("Enter Stock Symbol", "TCS.NS")
 # Cache function
 @st.cache_data
 def load_data(ticker):
-    return yf.download(ticker, period="1y")
+    import yfinance as yf
+    try:
+        df = yf.download(ticker, period="1y")
+        if df is None or df.empty:
+            return None
+        return df
+    except Exception:
+        return None
 
 try:
-    df = load_data(ticker)
+df = load_data(ticker)
 
-    if df.empty:
-        st.error("❌ No data found. Try: TCS.NS, RELIANCE.NS")
-    else:
-        st.success("✅ Data Loaded")
-
-        st.dataframe(df.tail())
+if df is None:
+    st.error("❌ No data found. Try: TCS.NS, RELIANCE.NS")
+    st.stop()
 
         # Chart
-        fig, ax = plt.subplots()
-        ax.plot(df["Close"])
-        ax.set_title("Closing Price")
+        import matplotlib.pyplot as plt
 
         st.pyplot(fig)
 
