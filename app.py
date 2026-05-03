@@ -26,7 +26,7 @@ try:
 df = load_data(ticker)
 
 if df is None:
-    st.error("❌ No data found. Try: TCS.NS, RELIANCE.NS")
+    st.error("❌ No data found")
     st.stop()
 
         # Chart
