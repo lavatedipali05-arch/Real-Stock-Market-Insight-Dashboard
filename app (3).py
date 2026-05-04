@@ -10,7 +10,7 @@ st.set_page_config(page_title="Stock Dashboard", layout="wide")
 st.title("📈 Stock Data Dashboard & Prediction")
 
 # ------------------ INPUT ------------------
-ticker = st.text_input("Enter Stock Symbol (e.g. TCS.NS, INFY.NS, RELIANCE.NS)", "INFY.NS")
+ticker = st.text_input("Enter Stock Symbol (e.g. TCS, INFY, RELIANCE)", "INFY")
 
 # ------------------ LOAD DATA ------------------
 @st.cache_data
@@ -27,7 +27,7 @@ def load_data(ticker):
 df = load_data(ticker)
 
 if df is None:
-    st.error("❌ No data found. Try valid symbols like TCS.NS, INFY.NS, RELIANCE.NS")
+    st.error("❌ No data found. Try valid symbols like TCS, INFY, RELIANCE")
 else:
     st.success("✅ Data Loaded Successfully")
 
