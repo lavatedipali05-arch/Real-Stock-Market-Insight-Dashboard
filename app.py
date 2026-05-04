@@ -3,10 +3,17 @@ import pandas as pd
 
 st.title("📊 Stock Data Dashboard")
 
-df = pd.read_csv("stock_data.csv")
+try:
+    df = pd.read_csv("stock_data.csv")
 
-st.subheader("Data Preview")
-st.dataframe(df)
+    st.subheader("Data Preview")
+    st.dataframe(df)
 
-st.subheader("Stock Close Price Chart")
-st.line_chart(df["Close"])
+    if "Close" in df.columns:
+        st.subheader("Stock Close Price Chart")
+        st.line_chart(df["Close"])
+    else:
+        st.error("❌ 'Close' column not found in CSV")
+
+except FileNotFoundError:
+    st.error("❌ stock_data.csv file missing in repo")
