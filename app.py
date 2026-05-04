@@ -14,11 +14,13 @@ ticker = st.text_input("Enter Stock Symbol (e.g. TCS.NS, INFY.NS, RELIANCE.NS)",
 @st.cache_data
 def load_data(ticker):
     try:
-        df = yf.download(ticker, period="1y", interval="1d", auto_adjust=True)
-        if df.empty:
+        df = yf.download(ticker, period="1y", interval="1d",progress=False,threada=False)
+        #fallback fix 
+        if df is none or df. empty:
             return None
+        df=df.dropna()
         return df
-    except:
+    except Exception as e:
         return None
 
 df = load_data(ticker)
