@@ -92,3 +92,19 @@ if ma20 > ma50:
     st.success("Trend: Bullish 📈")
 else:
     st.error("Trend: Bearish 📉")
+    @st.cache_data
+def load_data(ticker):
+    try:
+        df = yf.download(ticker, period="1y", interval="1d")
+
+        if df.empty:
+            return None
+
+        # ✅ FIX: flatten columns
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+
+        return df
+
+    except Exception:
+        return None
