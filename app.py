@@ -62,3 +62,8 @@ st.pyplot(fig)
 # --- DATA ---
 st.subheader("Raw Data")
 st.dataframe(df.tail())
+
+ticker = st.text_input("Enter Stock", "TCS")
+
+if not ticker.endswith(".NS"):
+    ticker = ticker + ".NS"
