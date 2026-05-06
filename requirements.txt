@@ -5,4 +5,5 @@ matplotlib==3.8.4
 seaborn==0.13.2
 scikit-learn==1.4.2
 requests==2.32.3
-jedi==0.19.1
+yfinance==0.2.40
+plotly==5.22.0
