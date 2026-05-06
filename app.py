@@ -2,9 +2,9 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
 import time
 from sklearn.linear_model import LinearRegression
-import numpy as np
 
 # ----------------------------
 # Page Config
@@ -14,117 +14,126 @@ st.set_page_config(page_title="📈 Pro Stock Dashboard", layout="wide")
 st.title("🚀 Pro Real-Time Stock Dashboard")
 
 # ----------------------------
-# Sidebar Inputs
+# Sidebar
 # ----------------------------
 stock = st.sidebar.text_input("Stock Symbol", "RELIANCE.NS")
+
 refresh_rate = st.sidebar.slider("Auto Refresh (sec)", 5, 60, 10)
 
+# Multi stock compare
+compare_stocks = st.sidebar.text_input("Compare Stocks (comma)", "TCS.NS,INFY.NS")
+
 # ----------------------------
-# Auto Refresh
+# Auto Refresh Trick (No while True)
 # ----------------------------
-placeholder = st.empty()
+st_autorefresh = st.empty()
+time.sleep(refresh_rate)
 
-while True:
-    with placeholder.container():
+# ----------------------------
+# Load Data
+# ----------------------------
+df = yf.download(stock, period="3mo", interval="1d")
 
-        # ----------------------------
-        # Load Data
-        # ----------------------------
-        df = yf.download(stock, period="6mo", interval="1d")
-        df.dropna(inplace=True)
+df.dropna(inplace=True)
 
-        # ----------------------------
-        # Indicators
-        # ----------------------------
-        df["SMA20"] = df["Close"].rolling(20).mean()
-        df["SMA50"] = df["Close"].rolling(50).mean()
+# ----------------------------
+# Candlestick Chart
+# ----------------------------
+fig = go.Figure(data=[go.Candlestick(
+    x=df.index,
+    open=df['Open'],
+    high=df['High'],
+    low=df['Low'],
+    close=df['Close']
+)])
 
-        # RSI
-        delta = df["Close"].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(14).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
-        rs = gain / loss
-        df["RSI"] = 100 - (100 / (1 + rs))
+fig.update_layout(title=f"{stock} Candlestick Chart")
 
-        # MACD
-        exp1 = df["Close"].ewm(span=12).mean()
-        exp2 = df["Close"].ewm(span=26).mean()
-        df["MACD"] = exp1 - exp2
-        df["Signal_Line"] = df["MACD"].ewm(span=9).
+st.plotly_chart(fig, use_container_width=True, key="main_chart")
 
-        # ----------------------------
-        # BUY / SELL Signal
-        # ----------------------------
-        df["Signal"] = 0
-        df.loc[df["SMA20"] > df["SMA50"], "Signal"] = 1
-        df["Position"] = df["Signal"].diff()
+# ----------------------------
+# RSI
+# ----------------------------
+delta = df['Close'].diff()
 
-        latest_signal = df["Signal"].iloc[-1]
+gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
 
-        st.subheader("📢 Signal")
-        if latest_signal == 1:
-            st.success("🟢 BUY")
-        else:
-            st.error("🔴 SELL")
+rs = gain / loss
+rsi = 100 - (100 / (1 + rs))
 
-        # ----------------------------
-        # Candlestick Chart (Plotly)
-        # ----------------------------
-        st.subheader("🕯️ Candlestick Chart")
+st.subheader("📊 RSI Indicator")
+st.line_chart(rsi)
 
-        fig = go.Figure(data=[go.Candlestick(
-            x=df.index,
-            open=df['Open'],
-            high=df['High'],
-            low=df['Low'],
-            close=df['Close']
-        )])
+# ----------------------------
+# MACD
+# ----------------------------
+exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+exp2 = df['Close'].ewm(span=26, adjust=False).mean()
 
-        fig.add_trace(go.Scatter(x=df.index, y=df["SMA20"], name="SMA20"))
-        fig.add_trace(go.Scatter(x=df.index, y=df["SMA50"], name="SMA50"))
+macd = exp1 - exp2
+signal = macd.ewm(span=9, adjust=False).mean()
 
-        st.plotly_chart(fig, use_container_width=True)
+st.subheader("📉 MACD Indicator")
+st.line_chart(macd - signal)
 
-        # ----------------------------
-        # RSI Chart
-        # ----------------------------
-        st.subheader("📉 RSI")
+# ----------------------------
+# Buy/Sell Signal
+# ----------------------------
+latest_rsi = rsi.iloc[-1]
 
-        rsi_fig = go.Figure()
-        rsi_fig.add_trace(go.Scatter(x=df.index, y=df["RSI"], name="RSI"))
-        rsi_fig.add_hline(y=70)
-        rsi_fig.add_hline(y=30)
+st.subheader("📢 Signal")
 
-        st.plotly_chart(rsi_fig, use_container_width=True)
+if latest_rsi < 30:
+    st.success("🟢 BUY Signal")
+elif latest_rsi > 70:
+    st.error("🔴 SELL Signal")
+else:
+    st.info("⚪ HOLD")
 
-        # ----------------------------
-        # MACD Chart
-        # ----------------------------
-        st.subheader("📊 MACD")
+# ----------------------------
+# ML Prediction
+# ----------------------------
+st.subheader("🤖 ML Prediction (Next Day)")
 
-        macd_fig = go.Figure()
-        macd_fig.add_trace(go.Scatter(x=df.index, y=df["MACD"], name="MACD"))
-        macd_fig.add_trace(go.Scatter(x=df.index, y=df["Signal_Line"], name="Signal"))
+df['Days'] = np.arange(len(df))
+X = df[['Days']]
+y = df['Close']
 
-        st.plotly_chart(macd_fig, use_container_width=True)
+model = LinearRegression()
+model.fit(X, y)
 
-        # ----------------------------
-        # ML Prediction (Simple)
-        # ----------------------------
-        st.subheader("🤖 ML Prediction (Next Day Price)")
+next_day = np.array([[len(df)]])
+prediction = model.predict(next_day)
 
-        df_ml = df[["Close"]].reset_index()
-        df_ml["Days"] = np.arange(len(df_ml))
+# ✅ FIXED HERE
+st.write(f"Next Predicted Price: ₹{float(prediction[0]):.2f}")
 
-        X = df_ml[["Days"]]
-        y = df_ml["Close"]
+# ----------------------------
+# Multi Stock Compare
+# ----------------------------
+st.subheader("📊 Multi Stock Compare")
 
-        model = LinearRegression()
-        model.fit(X, y)
+stocks_list = [s.strip() for s in compare_stocks.split(",")]
 
-        next_day = np.array([[len(df_ml)]])
-        prediction = model.predict(next_day)
+compare_df = pd.DataFrame()
 
-        st.write(f"The predicted closing price for the next day is: ${prediction[0][0]:.2f}")
+for s in stocks_list:
+    data = yf.download(s, period="3mo")['Close']
+    compare_df[s] = data
 
-        time.sleep(refresh_rate)
+st.line_chart(compare_df)
+
+# ----------------------------
+# Correlation Heatmap
+# ----------------------------
+st.subheader("🔥 Correlation")
+
+corr = compare_df.corr()
+
+st.dataframe(corr)
+
+# ----------------------------
+# Footer
+# ----------------------------
+st.caption("Made with ❤️ | Pro Trader Version 😎")
