@@ -50,7 +50,7 @@ while True:
         exp1 = df["Close"].ewm(span=12).mean()
         exp2 = df["Close"].ewm(span=26).mean()
         df["MACD"] = exp1 - exp2
-        df["Signal_Line"] = df["MACD"].ewm(span=9).mean()
+        df["Signal_Line"] = df["MACD"].ewm(span=9).
 
         # ----------------------------
         # BUY / SELL Signal
