@@ -12,6 +12,7 @@ Live Stock Market Analysis Dashboard built using Streamlit, Plotly, and Machine 
 - 💹 Buy/Sell Signals
 - 🌙 Dark Theme UI
 - ☁️ Streamlit Cloud Deployment
+- https://real-stock-market-insight-dashboard-zhya45us7qtkbky9lnjrid.streamlit.app/#macd-indicator
 
 ---
 
