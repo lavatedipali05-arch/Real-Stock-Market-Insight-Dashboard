@@ -39,67 +39,85 @@ df.dropna(inplace=True)
 # =========================
 # Candlestick Chart
 # =========================
+# =========================
+# Candlestick Chart
+# =========================
 
 st.subheader(f"📈 {stock} Candlestick Chart")
 
-# Download Data
-df = yf.download(stock, period="6mo", interval="1d", auto_adjust=False)
+try:
+    # Download stock data
+    df = yf.download(
+        tickers=stock,
+        period="6mo",
+        interval="1d",
+        progress=False,
+        auto_adjust=False
+    )
 
-# Fix MultiIndex issue
-if isinstance(df.columns, pd.MultiIndex):
-    df.columns = df.columns.get_level_values(0)
+    # Fix MultiIndex columns
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
 
-df.reset_index(inplace=True)
+    # Reset index
+    df = df.reset_index()
 
-# Remove empty rows
-df.dropna(inplace=True)
+    # Remove NaN
+    df = df.dropna()
 
-# Check data exists
-if df.empty:
-    st.error("No stock data found.")
-    st.stop()
+    # Debug
+    st.write("Rows Loaded:", len(df))
 
-# Create Figure
-fig = go.Figure(data=[go.Candlestick(
-    x=df['Date'],
-    open=df['Open'],
-    high=df['High'],
-    low=df['Low'],
-    close=df['Close'],
-    increasing_line_color='green',
-    decreasing_line_color='red',
-    name='Candlestick'
-)])
+    if len(df) == 0:
+        st.error("No stock data found.")
+    else:
 
-# SMA Lines
-df['SMA20'] = df['Close'].rolling(20).mean()
-df['SMA50'] = df['Close'].rolling(50).mean()
+        # Moving averages
+        df["SMA20"] = df["Close"].rolling(20).mean()
+        df["SMA50"] = df["Close"].rolling(50).mean()
 
-fig.add_trace(go.Scatter(
-    x=df['Date'],
-    y=df['SMA20'],
-    mode='lines',
-    name='SMA 20'
-))
+        # Candlestick Figure
+        fig = go.Figure(data=[go.Candlestick(
+            x=df["Date"],
+            open=df["Open"],
+            high=df["High"],
+            low=df["Low"],
+            close=df["Close"],
+            increasing_line_color='green',
+            decreasing_line_color='red'
+        )])
 
-fig.add_trace(go.Scatter(
-    x=df['Date'],
-    y=df['SMA50'],
-    mode='lines',
-    name='SMA 50'
-))
+        # SMA Lines
+        fig.add_trace(go.Scatter(
+            x=df["Date"],
+            y=df["SMA20"],
+            mode='lines',
+            name='SMA20'
+        ))
 
-# Layout
-fig.update_layout(
-    template="plotly_dark",
-    height=600,
-    xaxis_rangeslider_visible=False,
-    title=f"{stock} Candlestick Chart",
-)
+        fig.add_trace(go.Scatter(
+            x=df["Date"],
+            y=df["SMA50"],
+            mode='lines',
+            name='SMA50'
+        ))
 
-# Show Chart
-st.plotly_chart(fig, width="stretch")
+        # Layout
+        fig.update_layout(
+            template="plotly_dark",
+            height=600,
+            xaxis_rangeslider_visible=False
+        )
 
+        # Show chart
+        st.plotly_chart(fig, width="stretch")
+
+except Exception as e:
+    st.error(f"Error: {e}")
+
+
+
+#
 # ----------------------------
 # RSI
 # ----------------------------
