@@ -38,16 +38,16 @@ period = st.sidebar.selectbox(
     index=2
 )
 # =========================
-# DOWNLOAD DATA
-# ========================
+# DOWNLOAD STOCK DATA
+# =========================
 
 try:
     data = yf.download(
         ticker,
-        period="6mo",
+        period=period,
         interval="1d",
-        auto_adjust=True,
         progress=False,
+        auto_adjust=True,
         threads=False
     )
 
@@ -56,7 +56,7 @@ try:
         st.stop()
 
 except Exception as e:
-    st.error(f"Error fetching stock data: {e}")
+    st.error(f"Error loading stock data: {e}")
     st.stop()
 
 
