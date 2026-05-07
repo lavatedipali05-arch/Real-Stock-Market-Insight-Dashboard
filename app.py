@@ -46,8 +46,8 @@ try:
         ticker,
         period="6mo",
         interval="1d",
-        auto_adjust=True
-        progress=False
+        auto_adjust=True,
+        progress=False,
         threads=False
     )
 
