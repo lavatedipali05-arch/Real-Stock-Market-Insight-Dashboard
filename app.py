@@ -43,16 +43,25 @@ period = st.sidebar.selectbox(
 
 session = requests.Session()
 
+try
+ticker = st.sidebar.text_input("Enter Stock Symbol", "RELIANCE.NS")
+
 try:
-    df = yf.download(
+    data = yf.download(
         ticker,
-        period=period,
+        period="6mo",
         interval="1d",
-        auto_adjust=True,
-        progress=False,
-        threads=False,
-        session=session
+        auto_adjust=True
     )
+
+    if data.empty:
+        st.error("No stock data found.")
+        st.stop()
+
+except Exception as e:
+    st.error(f"Error fetching stock data: {e}")
+    st.stop()
+
 
     # fallback method
     if df.empty:
