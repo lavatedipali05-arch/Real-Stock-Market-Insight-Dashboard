@@ -47,6 +47,8 @@ try:
         period="6mo",
         interval="1d",
         auto_adjust=True
+        progress=False
+        threads=False
     )
 
     if data.empty:
