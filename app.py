@@ -41,9 +41,9 @@ period = st.sidebar.selectbox(
 # DOWNLOAD DATA
 # =========================
 
-session = requests.Session()
-
-try
+session = requests.Session(
+try:
+    
 ticker = st.sidebar.text_input("Enter Stock Symbol", "RELIANCE.NS")
 
 try:
