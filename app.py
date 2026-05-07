@@ -36,20 +36,69 @@ df = yf.download(stock, period="3mo", interval="1d")
 
 df.dropna(inplace=True)
 
-# ----------------------------
+# =========================
 # Candlestick Chart
-# ----------------------------
+# =========================
+
+st.subheader(f"📈 {stock} Candlestick Chart")
+
+# Download Data
+df = yf.download(stock, period="6mo", interval="1d", auto_adjust=False)
+
+# Fix MultiIndex issue
+if isinstance(df.columns, pd.MultiIndex):
+    df.columns = df.columns.get_level_values(0)
+
+df.reset_index(inplace=True)
+
+# Remove empty rows
+df.dropna(inplace=True)
+
+# Check data exists
+if df.empty:
+    st.error("No stock data found.")
+    st.stop()
+
+# Create Figure
 fig = go.Figure(data=[go.Candlestick(
-    x=df.index,
+    x=df['Date'],
     open=df['Open'],
     high=df['High'],
     low=df['Low'],
-    close=df['Close']
+    close=df['Close'],
+    increasing_line_color='green',
+    decreasing_line_color='red',
+    name='Candlestick'
 )])
 
-fig.update_layout(title=f"{stock} Candlestick Chart")
+# SMA Lines
+df['SMA20'] = df['Close'].rolling(20).mean()
+df['SMA50'] = df['Close'].rolling(50).mean()
 
-st.plotly_chart(fig, use_container_width=True, key="main_chart")
+fig.add_trace(go.Scatter(
+    x=df['Date'],
+    y=df['SMA20'],
+    mode='lines',
+    name='SMA 20'
+))
+
+fig.add_trace(go.Scatter(
+    x=df['Date'],
+    y=df['SMA50'],
+    mode='lines',
+    name='SMA 50'
+))
+
+# Layout
+fig.update_layout(
+    template="plotly_dark",
+    height=600,
+    xaxis_rangeslider_visible=False,
+    title=f"{stock} Candlestick Chart",
+)
+
+# Show Chart
+st.plotly_chart(fig, width="stretch")
 
 # ----------------------------
 # RSI
