@@ -37,21 +37,36 @@ period = st.sidebar.selectbox(
     ["1mo", "3mo", "6mo", "1y"],
     index=2
 )
-
 # =========================
 # DOWNLOAD DATA
 # =========================
+
+session = requests.Session()
+
 try:
     df = yf.download(
         ticker,
         period=period,
+        interval="1d",
+        auto_adjust=True,
         progress=False,
-        auto_adjust=False
+        threads=False,
+        session=session
     )
+
+    # fallback method
+    if df.empty:
+        stock = yf.Ticker(ticker)
+        df = stock.history(period=period)
 
     if df.empty:
         st.error("No stock data found.")
         st.stop()
+
+except Exception as e:
+    st.error(f"Stock Fetch Error: {e}")
+    st.stop()
+
 
 except Exception as e:
     st.error(f"Error loading stock data: {e}")
