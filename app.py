@@ -161,10 +161,11 @@ macd_fig.add_trace(
 
 st.plotly_chart(macd_fig, use_container_width=True)
 
-# -----------------------------
+# ------------------------------
 # ML PREDICTION
-# -----------------------------
-st.subheader("🤖 ML Prediction")
+# ------------------------------
+
+st.subheader("🧠 ML Prediction")
 
 df_ml = df[["Close"]].dropna().reset_index()
 
@@ -173,13 +174,18 @@ df_ml["Days"] = np.arange(len(df_ml))
 X = df_ml[["Days"]]
 y = df_ml["Close"]
 
-model = LinearRegression()
-model.fit(X, y)
+if len(df_ml) > 0:
 
-next_day = np.array([[len(df_ml)]])
-prediction = model.predict(next_day)
+    model = LinearRegression()
+    model.fit(X, y)
 
-st.success(f"Predicted Next Day Price: ₹{prediction[0]:.2f}")
+    next_day = np.array([[len(df_ml)]])
+    prediction = model.predict(next_day)
+
+    st.success(f"Predicted Next Day Price: ₹{prediction[0]:.2f}")
+
+else:
+    st.error("No data available for prediction")
 
 # -----------------------------
 # DATA TABLE
