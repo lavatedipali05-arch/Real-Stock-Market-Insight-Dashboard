@@ -38,7 +38,7 @@ period = st.sidebar.selectbox(
 import streamlit as st
 import yfinance as yf
 import time
-@st.cache_data(tt1=3600)
+@st.cache
 def get_stock_data(symbol):
     try:
         data = yf.download(
