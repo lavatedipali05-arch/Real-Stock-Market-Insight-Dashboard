@@ -35,6 +35,7 @@ period = st.sidebar.selectbox(
 # -----------------------------
 # DATA LOAD
 # -----------------------------
+import streamlit as st
 import yfinance as yf
 import time
 @st.cache_data(tt1=3600)
