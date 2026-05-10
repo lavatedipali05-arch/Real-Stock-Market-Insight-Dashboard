@@ -51,7 +51,7 @@ def get_stock_data(symbol):
         time.sleep(2) # important
         
         if data.empty:
-        return None
+             return None
         
         return data
 
