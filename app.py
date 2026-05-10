@@ -60,6 +60,10 @@ def get_stock_data(symbol):
         return None
         # Load Data
 df = get_stock_data(stock)
+
+if df is None:
+    st.error("no data available for prediction")
+    st.stop()
 # -----------------------------
 # FIX MULTI INDEX
 # -----------------------------
