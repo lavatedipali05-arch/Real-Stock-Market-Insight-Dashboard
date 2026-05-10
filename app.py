@@ -48,7 +48,9 @@ def get_stock_data(symbol):
             progress=False,
             threads=False
         )
-        time.sleep(2)   # important
+        time.slee # important
+        if data.empty:
+        return None
         return data
 
     except Exception as e:
