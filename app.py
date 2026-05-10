@@ -54,7 +54,8 @@ def get_stock_data(symbol):
     except Exception as e:
         print("Error:", e)
         return None
-
+        # Load Data
+df = get_stock_data(stock)
 # -----------------------------
 # FIX MULTI INDEX
 # -----------------------------
