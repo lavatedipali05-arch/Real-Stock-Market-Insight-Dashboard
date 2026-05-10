@@ -35,16 +35,24 @@ period = st.sidebar.selectbox(
 # -----------------------------
 # DATA LOAD
 # -----------------------------
-df = yf.download(
-    stock,
-    period=period,
-    progress=False,
-    auto_adjust=False
-)
+import yfinance as yf
+import time
+@st.cache_data(tt1=3600)
+def get_stock_data(symbol):
+    try:
+        data = yf.download(
+            symbol,
+            period="1y",
+            interval="1d",
+            progress=False,
+            threads=False
+        )
+        time.sleep(2)   # important
+        return data
 
-if df.empty:
-    st.error("No stock data found.")
-    st.stop()
+    except Exception as e:
+        print("Error:", e)
+        return None
 
 # -----------------------------
 # FIX MULTI INDEX
