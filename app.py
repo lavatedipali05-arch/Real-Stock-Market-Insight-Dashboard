@@ -38,37 +38,45 @@ period = st.sidebar.selectbox(
 import streamlit as st
 import yfinance as yf
 import time
-@st.cache_data(ttl=300)
-def get_stock_data(symbol):
-    try:
-        data = yf.download(
-            symbol,
-            period="1y",
-            interval="1d",
-            progress=False,
-            auto_adjust=True,
-            threads=False
-        )
-        time.sleep(2) # important
-        
-        if data.empty:
-             return None
-        
-        return data
 
-    except Exception as e:
-        print("Error:", e)
-        return None
-        # Load Data
-selected_stock = st.selectbox("select stock",
-   ["RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK"]
-)                             
+@st.cache_data(ttl=600)
+def get_stock_data(symbol):
+
+    for attempt in range(3):
+
+        try:
+            data = yf.download(
+                symbol,
+                period="6mo",
+                interval="1d",
+                progress=False,
+                auto_adjust=True,
+                threads=False
+            )
+
+            if not data.empty:
+                return data
+
+            time.sleep(3)
+
+        except Exception as e:
+            st.warning(f"Retry {attempt+1}: {e}")
+            time.sleep(5)
+
+    return None
+
+       # Load Data
+selected_stock = st.selectbox(
+    "Select Stock",
+    ["RELIANCE.NS", "TCS.NS", "INFY.NS"]
+)
+
 df = get_stock_data(selected_stock)
 
 if df is None:
-    st.error("no data available for prediction")
+    st.error("Yahoo Finance API limit reached. Try again later.")
     st.stop()
-    st.write(df.tail())
+
 # -----------------------------
 # FIX MULTI INDEX
 # -----------------------------
