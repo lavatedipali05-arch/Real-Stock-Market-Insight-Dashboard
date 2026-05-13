@@ -68,6 +68,7 @@ df = get_stock_data(selected_stock)
 if df is None:
     st.error("no data available for prediction")
     st.stop()
+    st.write(df.tail())
 # -----------------------------
 # FIX MULTI INDEX
 # -----------------------------
