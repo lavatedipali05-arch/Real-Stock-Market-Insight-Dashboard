@@ -60,7 +60,7 @@ def get_stock_data(symbol):
         print("Error:", e)
         return None
         # Load Data
-df = get_stock_data(selected_stock)
+df = get_stock_data(stock)
 
 if df is None:
     st.error("no data available for prediction")
