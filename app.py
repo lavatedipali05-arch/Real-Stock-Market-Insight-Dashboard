@@ -46,7 +46,7 @@ def get_stock_data(symbol):
             period="1y",
             interval="1d",
             progress=False,
-            auto_adjust=True
+            auto_adjust=True,
             threads=False
         )
         time.sleep(2) # important
