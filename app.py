@@ -60,7 +60,10 @@ def get_stock_data(symbol):
         print("Error:", e)
         return None
         # Load Data
-df = get_stock_data(stock)
+selected_stock = st.selectbox("select stock",
+   ["RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK"]
+)                             
+df = get_stock_data(selected_stock)
 
 if df is None:
     st.error("no data available for prediction")
