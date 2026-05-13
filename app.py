@@ -38,7 +38,7 @@ period = st.sidebar.selectbox(
 import streamlit as st
 import yfinance as yf
 import time
-@st.cache_data
+@st.cache_data(ttl=300)
 def get_stock_data(symbol):
     try:
         data = yf.download(
@@ -46,6 +46,7 @@ def get_stock_data(symbol):
             period="1y",
             interval="1d",
             progress=False,
+            auto_adjust=True
             threads=False
         )
         time.sleep(2) # important
@@ -59,7 +60,7 @@ def get_stock_data(symbol):
         print("Error:", e)
         return None
         # Load Data
-df = get_stock_data(stock)
+df = get_stock_data(selected_stock)
 
 if df is None:
     st.error("no data available for prediction")
