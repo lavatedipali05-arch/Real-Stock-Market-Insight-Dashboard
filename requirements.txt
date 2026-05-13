@@ -1,5 +1,6 @@
 streamlit
-yfinance==0.2.54
+yfinance==0.2.65
+curl_cffi
 pandas
 numpy
 plotly
