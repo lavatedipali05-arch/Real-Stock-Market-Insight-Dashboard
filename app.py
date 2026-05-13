@@ -77,6 +77,8 @@ if df is None:
     st.error("Yahoo Finance API limit reached. Try again later.")
     st.stop()
 
+st.write(df.tail())
+
 # -----------------------------
 # FIX MULTI INDEX
 # -----------------------------
